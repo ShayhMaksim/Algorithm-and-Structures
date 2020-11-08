@@ -271,7 +271,6 @@ void DIJKSTRA(std::list<Edge> listing,Apex *s,Apex * v)
       X.push_back(s);
 
       for (auto x : X) {
-          if (x==v) break;
           std::vector<Apex*> pool;
           for(auto it=listing.begin(); it!=listing.end();it++){
               if ((it->first==x) && (it->second!=x)){
