@@ -286,4 +286,98 @@ void DIJKSTRA(std::list<Edge> listing,Apex *s,Apex * v)
       return;
 }
 
+
+size_t h(std::string name)
+{
+  if (name ==("Arad")) return 366;
+  if (name ==("Zerind")) return 374;
+  if (name == ("Oradea")) return 380;
+  if (name ==("Sibiu")) return 253;
+  if (name ==("Timisoara")) return 329;
+  if (name == ("Lugoj")) return 244;
+  if (name == ("Mehadia")) return 241;
+  if (name == ("Drobeta")) return 242;
+  if (name == ("Craiova")) return 160;
+  if (name == ("Pitesti")) return 100;
+  if (name == ("Fagaras")) return 176;
+  if (name == ("Rimnicu Vilcea")) return 193;
+  if (name == ("Bucharest")) return 0;
+  if (name == ("Giorgiu")) return 77;
+  if (name ==("Urzicenu")) return 80;
+  if (name == ("Eforie")) return 161;
+  if (name == ("Hirsova")) return 151;
+  if (name == ("Vaslui")) return 199;
+  if (name == ("Iasi")) return 226;
+  if (name == ("Neamt")) return 234;
+
+  return 0;
+}
+
+
+Apex* minimum (std::vector<Apex*> Q,std::map<Apex*,size_t> f) {
+    size_t min=100000;
+    Apex* element=nullptr;
+   for (auto it: Q) {
+       if (f[it]<min)
+         {
+           min = f[it];
+           element=it;
+         }
+     }
+   return element;
+}
+
+bool AStar(std::list<Edge> listing,Apex *s,Apex * v){
+
+  // prepare
+  for(auto it=listing.begin(); it!=listing.end();it++){
+      it->first->len=1000000;
+    }
+
+  //std::map<Apex*,size_t> g;
+  std::map<Apex*,size_t> f;
+
+
+  std::vector<Apex*> Q;
+  std::vector<Apex*> U;
+
+  s->len=0;
+  Q.push_back(s);
+  f.insert(std::pair<Apex*,size_t>(s,s->len+h(s->name)));
+
+  while(Q.size()!=0) {
+      auto current = minimum(Q,f);
+      if (current==v) return true;
+      for (auto q=Q.begin();q!=Q.end();q++){
+          if (*q==current)
+            {
+              Q.erase(q);
+              break;
+            }
+        }
+      U.push_back(current);
+      for(auto it=listing.begin(); it!=listing.end();it++){
+          if ((it->first==current) && (it->second!=current)) {
+              auto tentativeScore = current->len + it->distance;
+              for (auto u=U.begin();u!=U.end();u++){
+                  if ((*u==it->second) &&  (tentativeScore>=it->second->len)) continue;
+                }
+              if (tentativeScore<it->second->len) {
+                  it->second->before=current;
+                  it->second->len = tentativeScore;
+                  f[it->second] = it->second->len + h(v->name);
+                  for (auto q=Q.begin();q!=Q.end();q++){
+                      if (*q==it->second) {
+                          continue;
+                        }
+                    }
+                  Q.push_back(it->second);
+                }
+            }
+        }
+    }
+  return false;
+}
+
+
 #endif // GRAPH_H
