@@ -10,6 +10,8 @@
 #include <tuple>
 #include <set>
 #include <stack>
+
+
 /**
  * @brief The Apex struct - вершина
  */
@@ -18,6 +20,10 @@ struct Apex
     bool flag=false;
     std::string name;
     int f_topo=0;
+    // предыдущая вершина
+    Apex * before = nullptr;
+    // значение для len()=ininity
+    size_t len=1000000;
     Apex(std::string name):name(name){}
 };
 
@@ -31,7 +37,8 @@ struct Edge
 {
     Apex * first;
     Apex * second;
-    Edge(Apex * first,Apex * second):first(first),second(second){}
+    size_t distance;
+    Edge(Apex * first,Apex * second,size_t distance=0):first(first),second(second),distance(distance){}
 };
 
 
@@ -256,5 +263,27 @@ void DFS_TOPOSORT(std::list<Edge> listing,Apex * s,std::list<Apex *> lister,std:
             it->flag=false;
 }
 
+void DIJKSTRA(std::list<Edge> listing,Apex *s,Apex * v)
+{
+      std::list<Apex*> X;
+
+      s->len=0;
+      X.push_back(s);
+
+      for (auto x : X) {
+          if (x==v) break;
+          std::vector<Apex*> pool;
+          for(auto it=listing.begin(); it!=listing.end();it++){
+              if ((it->first==x) && (it->second!=x)){
+                  if (it->second->len>(it->first->len+it->distance)) {
+                      it->second->len=it->first->len+it->distance;
+                      it->second->before=it->first;          
+                      X.push_back(it->second);
+                    }
+                }
+            }
+        }
+      return;
+}
 
 #endif // GRAPH_H
